@@ -49,14 +49,39 @@ router.post("/reserve/add", async (req, res) => {
 //   await user.addRide([ride,RidePassengers]);
 //   const appointment = await sequelize.query(`INSERT INTO RidePassenger(rideId,passengerId) VALUES("${rideId}","${passengerId}"`, { type: QueryTypes.INSERT});
   
+router.post('/search', async(req, res) => {
+  try {
+   const rides = await Ride.findAll({
+     where: {
+       departure: req.body.departure,
+       destination: req.body.destination
+     }
+      
+   });
+   res.status(200).json(rides);
+   } catch(error) {
+       res.status(405).json(error);
+   }
+});
 
+router.post('/reserve', async (req, res) => {
+  try {
+    const passengerId = req.body.passengerId;
+    const rideId = req.body.rideId;
+    let ride = await Ride.findByPk(rideId);
+    let reserved = await ride.addPassenger(passengerId);
+    if(reserved) return res.json('reserved');
+  } catch(error) {
+    res.status(405).json(error);
+  }
+});
 
 
 
 
 //basma
 //will insert a new row in the rides table
-router.post('/add', async(req, res) => {
+router.post('/create', async(req, res) => {
     try{console.log(req.body)
    const ride = await Ride.create({
      

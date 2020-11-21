@@ -2,7 +2,8 @@ const {Passenger} = require('../../database/models');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const ride = require('../../database/models/ride');
 
 
 router.get("/", async (req, res) => {
@@ -15,10 +16,11 @@ router.get("/", async (req, res) => {
 
 
   router.post("/register", async (req, res) => {
+    console.log(req.body)
   const emailExist = await Passenger.findOne({
     where: { email: req.body.email },
   }); 
-  if (emailExist) return res.status(400).send("Email already exist");
+  if (emailExist) return res.send({message: "Email already exist"});
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(req.body.password, salt); 
   const passenger = await Passenger.create({
@@ -30,7 +32,14 @@ router.get("/", async (req, res) => {
       phoneNumber: req.body.phoneNumber,
       ICN: req.body.ICN
     })
-  res.json(passenger)
+  res.status(200).json({
+    passenger: passenger,
+    accessToken: jwt.sign(
+      { id: passenger.id },
+      'RANDOM_TOKEN_SECRET',
+      { expiresIn: 30*60 } 
+    )
+  })
 })
 
 router.post("/login", async (req, res) => {
@@ -38,11 +47,11 @@ router.post("/login", async (req, res) => {
     const user = await Passenger.findOne({ where: { email: req.body.email } });
     if (!user) {res.json({ message :"Email is not found"}) }
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if (!validPass) return res.status(400).json({message: "Invalid password "});
+    if (!validPass) return res.json({message: "Invalid password "});
     res.status(200).json({
         passenger: user,
         accessToken: jwt.sign(
-          { userId: user.id },
+          { id: user.id },
           'RANDOM_TOKEN_SECRET',
           { expiresIn: 30*60 } 
         )
@@ -59,6 +68,9 @@ router.post("/login", async (req, res) => {
         res.json("deleted");
       });
   });
+
+
+
 
 
   // const passenger= await sequelize.query(`INSERT INTO passenger(firstName,lastName,address,phoneNumber,email,password,ICN) VALUES("${firstName}","${lastName}","${address}","${phoneNumber}","${email}","${password}","${ICN}"`, { type: QueryTypes.INSERT});

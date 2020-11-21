@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
     const emailExist = await Driver.findOne({
       where: { email: req.body.email },
     }); 
-    if (emailExist) return res.status(400).send("Email already exist");
+    if (emailExist) return res.send({message: "Email already exist"});
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(req.body.password, salt); 
     const driver = await Driver.create({
@@ -33,8 +33,15 @@ router.get("/", async (req, res) => {
         phoneNumber: req.body.phoneNumber,
         ICN: req.body.ICN,
         driverLicense: req.body.driverLicense
+      });
+    res.json({
+      driver: driver,
+        accessToken : jwt.sign(
+          { id: driver.id },
+          'RANDOM_TOKEN_SECRET',
+          { expiresIn: 2*60 }
+        )
       })
-    res.json(driver)
   })
 
   router.post("/login", async (req, res) => {
@@ -43,7 +50,7 @@ router.get("/", async (req, res) => {
     if (!user){
        return res.json({ message :"Email is not found"}) }
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if (!validPass) return res.status(500).json({message: "Invalid password "});
+    if (!validPass) return res.send({message: "Invalid password "});
     res.status(200).json({
       driver: user,
         accessToken : jwt.sign(
