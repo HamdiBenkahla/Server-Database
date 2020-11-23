@@ -62,43 +62,45 @@ router.post('/search', async(req, res) => {
    }
 });
 
-// router.post('/reserve', async (req, res) => {
-//   console.log(req.body)
-//   try {
-//     const passengerId = req.body.passengerId;
-//     const rideId = req.body.rideId;
-//     console.log(rideId)
-//     let ride = await Ride.findByPk(rideId);
-//     let reserved = await ride.addPassenger(passengerId);
-//     if(reserved) return res.json('reserved');
-//   } catch(error) {
-//     res.status(405).json(error);
+router.post('/reserve', async (req, res) => {
+  console.log(req.body)
+  try {
+    const passengerId = req.body.passengerId;
+    const rideId = req.body.rideId;
+    console.log(rideId)
+    let ride = await Ride.findByPk(rideId);
+    let seat = await Ride.decrement('seats', { where: { id: ride_id }});
+    console.log(seat)
+    let reserved = await ride.addPassenger(passengerId);
+    if(reserved) return res.json('reserved');
+  } catch(error) {
+    res.status(405).json(error);
+  }
+});
+
+// router.post('/reserve',async(req,res)=>{
+//   console.log(req.body);
+//   const ride_id = req.body.rideId;
+//   const passenger_id = req.body.passengerId;
+//   try{
+//     const seat = await Ride.findByPk(ride_id)
+//     console.log(seat.seats);
+//     if (seat.checkedStatus === true) return res.json( "no more seats for this ride");
+//     if(seat.seats !== 0){
+//  await Ride.decrement('seats', { where: { id: ride_id }});
+//    const updated = await Ride.findByPk(ride_id)
+//    if(updated.seats === 0){
+//    await Ride.update({ checkedStatus : true })	
+//      }
+//    res.status(200).json('place is reserved!')
 //   }
-// });
-
-router.post('/reserve',async(req,res)=>{
-  console.log(req.body);
-  const ride_id = req.body.rideId;
-  const passenger_id = req.body.passengerId;
-  try{
-    const seat = await Ride.findByPk(ride_id)
-    if (seat.checkedStatus === true) return res.send({message: "no more seats for this ride"});
-    if(seat.seats !== 0){
- await Ride.decrement('seats', { where: { id: ride_id }});
- console.log(ride, "here i am")
-   const updated = await Ride.findByPk(ride_id)
-   if(updated.seats === 0){
-   await Ride.update({ checkedStatus : true })	
-     }
-   res.status(200).json('place is reserved!')
-  }
-  }catch(error){
-   res.status(405).json(error)
-  }
-})
+//   }catch(error){
+//    res.status(405).json(error)
+//   }
+// })
 
 
-router.get('/:id', async(req, res) => {
+router.get('/passenger/:id', async(req, res) => {
   try{
     console.log(req.params)
     const passengerId = Number(req.params.id);
@@ -113,6 +115,13 @@ router.get('/:id', async(req, res) => {
   }
 })
 
+router.get("/driver/:id", async (req, res) => {
+  console.log(req.params)
+  const id = Number(req.params.id);
+  const ride= await Ride.findAll({where: { driverId :id } })
+console.log(ride)
+  res.json(ride)
+});
 
 //basma
 //will insert a new row in the rides table
