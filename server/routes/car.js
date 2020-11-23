@@ -5,12 +5,32 @@ const AuthJwt = require('../Middleware/auth.jwt.js')
 const {Car} = require('../../database/models');
 
 
+
 router.get("/:id", async (req, res) => {
-  await Car.findByPk(req.params.id).then((car) => res.json(car));
+  console.log(typeof req.params.id)
+  const id = Number(req.params.id);
+  const ride= await Car.findAll({where: { driverId :id } })
+console.log(ride)
+  res.json(ride)
 });
 
-router.post("/create", async (req, res) => {
+
+
+router.post("/carId",async(req,res)=>{
+  const car= await Car.findOne({where: { driverId :req.body.driverId } })
+  const id=car
+  console.log(id)
+  if(!id) return res.status(400).send("No car found")
+  if(id) return res.status(200).json(id)
+});
+
+
+router.post("/create",  async (req, res) => {
   console.log(req.body)
+  const carExist = await Car.findOne({
+    where: { VIN: req.body.VIN },
+  }); 
+  if (carExist) return res.send({message: "there's a car already registred by this number"});
   const car = await Car.create({
       model: req.body.model,
       fuelType: req.body.fuelType,

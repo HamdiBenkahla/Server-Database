@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const {Driver} = require('../../database/models');
 const AuthJwt = require('../Middleware/auth.jwt.js')
-
+const nodemailer = require("nodemailer");
+const smtpTransport = require("nodemailer-smtp-transport");
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
@@ -11,7 +12,7 @@ router.get("/", async (req, res) => {
     await Driver.findAll().then((drivers) => res.json(drivers));
   });
 
-  router.get("/:id", AuthJwt, async (req, res) => {
+  router.get("/:id", async (req, res) => {
     await Driver.findByPk(req.params.id).then((drivers) => res.json(drivers));
   });
 
@@ -34,14 +35,42 @@ router.get("/", async (req, res) => {
         ICN: req.body.ICN,
         driverLicense: req.body.driverLicense
       });
-    res.json({
-      driver: driver,
-        accessToken : jwt.sign(
-          { id: driver.id },
-          'RANDOM_TOKEN_SECRET',
-          { expiresIn: 2*60 }
-        )
-      })
+  nodemailer.createTestAccount((err, email) => {
+        var transporter = nodemailer.createTransport(
+          smtpTransport({
+            service: "gmail",
+            port: 465,
+            secure: false,
+            host: "smtp.gmail.com",
+            auth: {
+              user: "mydocapplication123456@gmail.com",
+              pass: "Mydocapplication123",
+            },
+            tls: {
+              rejectUnauthorized: false,
+            },
+          })
+        );
+        let mailOptions = {
+          from: "Car-pooling@RBK.com",
+          to: `${req.body.email}`,
+          subject: "Carpooling new account",
+          text: `Hey ${req.body.firstName}, ${req.body.lastName} welcome to our community.     
+                Driving in your car soon?
+                Let's make this your least expensive and eco-friendly.
+                 Your ride. your choice !`,
+        };
+        transporter.sendMail(mailOptions, (err, info) => {
+          res.json({
+            driver: driver,
+              accessToken : jwt.sign(
+                { id: driver.id },
+                'HAMDI_IS_DYING',
+                { expiresIn: 2*60 }
+              )
+            })
+        });
+      }); 
   })
 
   router.post("/login", async (req, res) => {
@@ -55,7 +84,7 @@ router.get("/", async (req, res) => {
       driver: user,
         accessToken : jwt.sign(
           { id: user.id },
-          'RANDOM_TOKEN_SECRET',
+          'HAMDI_IS_DYING',
           { expiresIn: 2*60 } //expires in by seconds
         )
       });

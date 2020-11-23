@@ -10,9 +10,18 @@ router.get('/', async(req, res) => {
 });
 
 
-router.get('/ride', async(req, res) => {
-    await Ride.findOne({where: {date: req.body.date}}).then((ride) => res.json(ride))
+router.get('/RideByDriver', async(req, res) => {
+    await Ride.findOne({where: {driverId: req.body.driverId}}).then((ride) => res.json(ride))
 });
+
+router.get("/:id", async (req, res) => {
+    console.log(typeof req.params.id)
+    const id = Number(req.params.id);
+    const ride= await Ride.findAll({where: { driverId :id } })
+  console.log(ride)
+    res.json(ride)
+  });
+  
 
 
 router.post('/create', async(req, res) => {
@@ -97,6 +106,5 @@ router.post('/reserve', async (req, res) => {
           res.status(500).json(error);
       }
   })
-
 
 module.exports = router ;

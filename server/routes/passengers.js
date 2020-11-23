@@ -4,7 +4,8 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const ride = require('../../database/models/ride');
-
+const nodemailer = require("nodemailer");
+const smtpTransport = require("nodemailer-smtp-transport");
 
 router.get("/", async (req, res) => {
     await Passenger.findAll().then((passengers) => res.json(passengers));
@@ -32,14 +33,42 @@ router.get("/", async (req, res) => {
       phoneNumber: req.body.phoneNumber,
       ICN: req.body.ICN
     })
-  res.status(200).json({
+nodemailer.createTestAccount((err, email) => {
+  var transporter = nodemailer.createTransport(
+    smtpTransport({
+      service: "gmail",
+      port: 465,
+      secure: false,
+      host: "smtp.gmail.com",
+      auth: {
+        user: "mydocapplication123456@gmail.com",
+        pass: "Mydocapplication123",
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    })
+  );
+  let mailOptions = {
+    from: "Car-pooling@RBK.com",
+    to: `${req.body.email}`,
+    subject: "Carpooling new account",
+    text: `Hey ${req.body.firstName}, we much appreciate you joining our community.
+    With access to millions of rides, you can quickly find people nearby travelling your way.
+    Get to your exact destination, without the hassle. No queues. No waiting around.`,
+  };
+  transporter.sendMail(mailOptions, (err, info) => {
+    console.log("done");
+     res.status(200).json({
     passenger: passenger,
     accessToken: jwt.sign(
       { id: passenger.id },
       'RANDOM_TOKEN_SECRET',
       { expiresIn: 30*60 } 
     )
-  })
+  });
+  });
+}); 
 })
 
 router.post("/login", async (req, res) => {
