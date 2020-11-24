@@ -27,6 +27,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       checkedStatus: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
