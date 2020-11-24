@@ -120,7 +120,7 @@ router.post('/reserve',async(req,res)=>{
 })
 
 
-router.get('/:id', async(req, res) => {
+router.get('/passenger/:id', async(req, res) => {
   try{
     console.log(req.params)
     const passengerId = Number(req.params.id);
@@ -135,6 +135,19 @@ router.get('/:id', async(req, res) => {
   }
 })
 
+router.get('/passengers/:id', async(req, res) => {
+  try{
+    const rideId = Number(req.params.id);
+    const ride = await Ride.findByPk(rideId);
+    const passengers = await ride.getPassengers();
+    console.log(passengers);
+    if(passengers.length) {
+      res.status(200).json(passengers);
+    }
+  } catch(error) {
+    res.status(500).json(error);
+  }
+})
 
 //basma
 //will insert a new row in the rides table
@@ -166,17 +179,20 @@ router.post('/create', async(req, res) => {
   //  3 - filter the data from database where checkedStatus is false
   //  4 - send the response to the front end in an object where the key is data
   //    find() for any field
-   router.get('/:id',async (req,res) => {  
+   router.get('/driver/:id',async (req,res) => {
+     try {
     const driverId = Number(req.params.id); 
     const rides = await Ride.findAll({
         where: {
-          [Op.and]: [
-            { driverId: driverId },
-            { checkedStatus: false }
-          ]
+            driverId: driverId 
         }
       });
-        res.json(rides) 
+      if(rides.length){
+        res.status(200).json(rides);
+       }
+   }catch(error) {
+     res.status(500).json(error);
+ }
 });
 
 
