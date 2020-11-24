@@ -120,7 +120,7 @@ router.post('/reserve',async(req,res)=>{
 })
 
 
-router.get('passenger/:id', async(req, res) => {
+router.get('/passenger/:id', async(req, res) => {
   try{
     console.log(req.params)
     const passengerId = Number(req.params.id);
@@ -135,6 +135,19 @@ router.get('passenger/:id', async(req, res) => {
   }
 })
 
+router.get('/passengers/:id', async(req, res) => {
+  try{
+    const rideId = Number(req.params.id);
+    const ride = await Ride.findByPk(rideId);
+    const passengers = await ride.getPassengers();
+    console.log(passengers);
+    if(passengers.length) {
+      res.status(200).json(passengers);
+    }
+  } catch(error) {
+    res.status(500).json(error);
+  }
+})
 
 //basma
 //will insert a new row in the rides table
