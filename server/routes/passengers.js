@@ -63,7 +63,7 @@ nodemailer.createTestAccount((err, email) => {
     passenger: passenger,
     accessToken: jwt.sign(
       { id: passenger.id },
-      'RANDOM_TOKEN_SECRET',
+      'HAMDI_IS_DYING',
       { expiresIn: 30*60 } 
     )
   });
