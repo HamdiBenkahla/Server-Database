@@ -41,6 +41,10 @@ module.exports = {
           as: 'rideId',
         }
       },
+      sender: {
+        allowNull: false,
+        type: Sequelize.ENUM('passenger', 'driver')
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

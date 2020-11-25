@@ -13,6 +13,7 @@ router.post('/create', async(req, res) => {
    const feedback = await Feedback.create({     
        passengerId: req.body.passengerId,
        message: req.body.message,
+       sender : req.body.sender,
        rideId: req.body.rideId,
        driverId: req.body.driverId
        })

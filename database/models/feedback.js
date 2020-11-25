@@ -28,6 +28,7 @@ module.exports = (sequelize, DataTypes) => {
   Feedback.init({
     message: DataTypes.STRING,
     passengerId: DataTypes.INTEGER,
+    sender : DataTypes.ENUM('passenger', 'driver'),
     driverId: DataTypes.INTEGER,
     rideId: DataTypes.INTEGER
   }, {
