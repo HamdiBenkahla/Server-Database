@@ -173,7 +173,8 @@ router.post('/create', async(req, res) => {
     const driverId = Number(req.params.id); 
     const rides = await Ride.findAll({
         where: {
-            driverId: driverId 
+            driverId: driverId,
+            ratedStatus: false
         }
       });
       if(rides.length){
