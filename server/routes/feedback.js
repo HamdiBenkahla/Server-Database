@@ -10,19 +10,46 @@ router.get('/', async(req, res) => {
 
 router.post('/create', async(req, res) => {
     try{console.log(req.body)
-   const feedback = await Feedback.create({     
+        const rating = req.body.rating
+        const driverId = req.body.driverId;    
+     await Driver.increment("rating", {by: rating, where: {id: driverId}})
+     await Driver.increment("timesRated", {by: 1, where: {id: driverId}})
+
+    const feedback = await Feedback.create({     
        passengerId: req.body.passengerId,
        message: req.body.message,
        sender : req.body.sender,
        rideId: req.body.rideId,
        driverId: req.body.driverId
        })
+
        console.log(feedback)
        res.json(feedback)
     }catch(error){
      res.status(500).json(error)
     }
+
    })
+
+
+   router.get('/driver/:id',async (req,res) => {
+    try {
+   const driverId = Number(req.params.id); 
+   const feedback = await Feedback.findAll({
+       where: {
+           driverId: driverId 
+       } ,
+       include: [Passenger] 
+     });
+     if(feedback.length){
+       res.status(200).json(feedback);
+      }
+  }catch(error) {
+    res.status(500).json(error);
+}
+});
+
+
 
 
    module.exports = router ;
