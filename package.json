@@ -18,7 +18,6 @@
   },
   "homepage": "https://github.com/HaykelHadjSalem/Server-Database#readme",
   "dependencies": {
-    "@types/sequelize": "^4.28.9",
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
