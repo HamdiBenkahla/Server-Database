@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Feedback', {
+    await queryInterface.createTable('Feedbacks', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -41,6 +41,10 @@ module.exports = {
           as: 'rideId',
         }
       },
+      sender: {
+        allowNull: false,
+        type: Sequelize.ENUM('passenger', 'driver')
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -54,6 +58,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Feedback');
+    await queryInterface.dropTable('Feedbacks');
   }
 };

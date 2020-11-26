@@ -51,9 +51,9 @@ router.post('/search', async(req, res) => {
     const passengerId = req.body.passengerId;
     console.log(req.body)
     const passenger = await Passenger.findByPk(passengerId);
-    // console.log(passenger)
+    console.log(passenger)
     const myRides = await passenger.getRides();
-    // console.log(myRides)
+    console.log(myRides)
     const rides = await Ride.findAll({
       where: {
         departure: req.body.departure,
@@ -70,7 +70,7 @@ router.post('/search', async(req, res) => {
       }
       if(j === myRides.length) {searchedRides.push(rides[i]);}
     }
-    // console.log(searchedRides)
+    console.log(searchedRides)
     res.status(200).json(searchedRides);
     } catch(error) {
         res.status(405).json(error);
@@ -91,8 +91,7 @@ router.post('/search', async(req, res) => {
 //   }
 // });
 
-router.post('/reserve',async(req,res)=>{
-  
+router.post('/reserve',async(req,res)=>{ 
   try{
     console.log(req.body);
   const rideId = req.body.rideId;
@@ -107,16 +106,6 @@ router.post('/reserve',async(req,res)=>{
         } catch(error) {
           res.status(405).json(error);
         }
- 
-  //  const updated = await Ride.findByPk(ride_id)
-  //  if(updated.seats === 0){
-  //  await Ride.update({ checkedStatus : true })	
-  //    }
-  //  res.status(200).json('place is reserved!')
-  
-  // }catch(error){
-  //  res.status(405).json(error)
-  // }
 })
 
 
@@ -184,7 +173,8 @@ router.post('/create', async(req, res) => {
     const driverId = Number(req.params.id); 
     const rides = await Ride.findAll({
         where: {
-            driverId: driverId 
+            driverId: driverId,
+            ratedStatus: false
         }
       });
       if(rides.length){
