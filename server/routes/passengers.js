@@ -7,12 +7,12 @@ const ride = require('../../database/models/ride');
 const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
 
-router.get("/", async (req, res) => {
-    await Passenger.findAll().then((passengers) => res.json(passengers));
+router.get("/",  (req, res) => {
+     Passenger.findAll().then((passengers) => res.json(passengers));
   });
 
-  router.get("/:id", async (req, res) => {
-    await Passenger.findByPk(req.params.id).then((passenger) => res.json(passenger));
+  router.get("/:id", (req, res) => {
+     Passenger.findByPk(req.params.id).then((passenger) => res.json(passenger));
   });
 
 
@@ -88,8 +88,8 @@ router.post("/login", async (req, res) => {
        
   });  
    
-  router.delete("/:id", async (req, res) => {
-    await Passenger.findByPk(req.params.id)
+  router.delete("/:id",  (req, res) => {
+     Passenger.findByPk(req.params.id)
       .then((passenger) => {
         passenger.destroy();
       })
