@@ -15,24 +15,6 @@ router.get('/ride', async(req, res) => {
 });
 
 
-// router.post('/', async(req, res) => {
-//     await Ride.create({
-//         departure: req.body.deparature,
-//         destination: req.body.destination,
-//         time: req.body.time,
-//         date: req.body.date,
-//         price: req.body.price,
-//         seats: req.body.seats,
-//         stop1: req.body.stop1,
-//         stop2: req.body.stop2,
-//         stop3: req.body.stop3,
-//         stop4: req.body.stop4,
-//         driverId: req.driverId
-//     })
-//     .then((ride) => res.json(ride))
-// })
-
-
 router.post("/reserve/add", async (req, res) => {
   console.log(req.body)
     const passengerId = req.body.passengerId;
@@ -77,19 +59,6 @@ router.post('/search', async(req, res) => {
     }
 });
 
-// router.post('/reserve', async (req, res) => {
-//   console.log(req.body)
-//   try {
-//     const passengerId = req.body.passengerId;
-//     const rideId = req.body.rideId;
-//     console.log(rideId)
-//     let ride = await Ride.findByPk(rideId);
-//     let reserved = await ride.addPassenger(passengerId);
-//     if(reserved) return res.json('reserved');
-//   } catch(error) {
-//     res.status(405).json(error);
-//   }
-// });
 
 router.post('/reserve',async(req,res)=>{ 
   try{

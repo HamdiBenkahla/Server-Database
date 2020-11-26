@@ -8,12 +8,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
 
-router.get("/", async (req, res) => {
-    await Driver.findAll().then((drivers) => res.json(drivers));
+router.get("/", (req, res) => {
+    Driver.findAll().then((drivers) => res.json(drivers));
   });
 
-  router.get("/:id", async (req, res) => {
-    await Driver.findByPk(req.params.id).then((drivers) => res.json(drivers));
+  router.get("/:id",  (req, res) => {
+ Driver.findByPk(req.params.id).then((drivers) => res.json(drivers));
+
   });
 
 
@@ -90,7 +91,7 @@ router.get("/", async (req, res) => {
       });
   });
 
-  router.put("/:id", async (req, res) => {
+  router.put("/:id", (req, res) => {
     Driver.findByPk(req.params.id).then((drivers) => {
       drivers.update({
             firstName: req.body.firstName,
@@ -112,8 +113,8 @@ router.get("/", async (req, res) => {
 
 
 
-  router.delete("/:id", async (req, res) => {
-    await Driver.findByPk(req.params.id)
+  router.delete("/:id",  (req, res) => {
+     Driver.findByPk(req.params.id)
       .then((drivers) => {
         drivers.destroy();
       })
