@@ -18,6 +18,9 @@ router.post('/create', async(req, res) => {
        driverId: req.body.driverId
        })
        console.log(feedback)
+       if(req.body.rated) {
+           await Ride.update({ratedStatus: true}, { where: { id: req.body.rideId}}) 
+       }
        res.json(feedback)
     }catch(error){
      res.status(500).json(error)

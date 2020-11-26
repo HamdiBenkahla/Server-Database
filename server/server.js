@@ -17,7 +17,7 @@ app.use("/car", car);
 app.use("/passenger", passenger);
 app.use("/driver", driver);
 app.use("/ride", ride);
-app.use('./feedback', feedback);
+app.use('/feedback', feedback);
 
 
 const PORT = 3000;
