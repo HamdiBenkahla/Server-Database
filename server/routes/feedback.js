@@ -10,7 +10,7 @@ router.get('/', async(req, res) => {
 
 router.post('/create', async(req, res) => {
     try{console.log(req.body)
-        const rating = req.body.rating
+        const rating = Number(req.body.rating)
         const driverId = req.body.driverId;    
      await Driver.increment("rating", {by: rating, where: {id: driverId}})
      await Driver.increment("timesRated", {by: 1, where: {id: driverId}})
@@ -40,7 +40,8 @@ router.post('/create', async(req, res) => {
    const driverId = Number(req.params.id); 
    const feedback = await Feedback.findAll({
        where: {
-           driverId: driverId 
+           driverId: driverId,
+           sender : "passenger" 
        } ,
        include: [Passenger] 
      });
