@@ -32,6 +32,7 @@ module.exports = {
         defaultValue: false
       },
       ratedStatus: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
         defaultValue: false
       },
