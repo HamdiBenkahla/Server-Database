@@ -11,7 +11,7 @@ router.get('/', async(req, res) => {
 router.post('/create', async(req, res) => {
     try{
         console.log(req.body)
-        const rating = +req.body.rating
+        const rating = Number(req.body.rating)
         const driverId = req.body.driverId;
         const driver = await Driver.findByPk(driverId)
         let newRating = (rating + (driver.rating * driver.timesRated)) / (driver.timesRated + 1);
@@ -43,8 +43,9 @@ router.post('/create', async(req, res) => {
    const driverId = Number(req.params.id); 
    const feedback = await Feedback.findAll({
        where: {
-           driverId: driverId 
-       } ,
+           driverId: driverId,
+           sender : "passenger" 
+       },order: [['createdAt', 'DESC']] ,
        include: [Passenger] 
      });
      if(feedback.length){
