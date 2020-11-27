@@ -1,6 +1,6 @@
 const express = require('express');
 const router= express.Router();
-const {Feedback, Ride, Passenger, Driver} = require('../../database/models');
+const {Feedback, Ride, Passenger, Driver, RidePassenger} = require('../../database/models');
 
 router.get('/', async(req, res) => {
  const feedback = await Feedback.findAll()
@@ -11,14 +11,20 @@ router.get('/', async(req, res) => {
 router.post('/create', async(req, res) => {
     try{
         console.log(req.body)
-        const rating = +req.body.rating
+        const rating = Number(req.body.rating)
         const driverId = req.body.driverId;
-        const driver = await Driver.findByPk(driverId)
+        const rideId = req.body.rideId;
+        const passengerId = req.body.passengerId;
+        const driver = await Driver.findByPk(driverId);
         let newRating = (rating + (driver.rating * driver.timesRated)) / (driver.timesRated + 1);
         await Driver.increment("timesRated", {by: 1, where: {id: driverId}})
-        await Driver.update({rating: newRating}, {where: {id: driverId}})
-        const ride = await Ride.findByPk(rideId);
-        await ride.addPassenger(passengerId, {ratedStatus: true});
+        const driverrated = await Driver.update({rating: newRating}, {where: {id: driverId}});
+        console.log(driverrated)
+        // const ride = await Ride.findByPk(rideId);
+        // console.log(ride);
+        const ratedride = await RidePassenger.update({ratedStatus: true}, {where: {rideId: rideId, passengerId: passengerId}})
+        // const updatedstatus = await ride.addPassenger({passengerId: passengerId, ratedStatus: true});
+        console.log(ratedride);
         const feedback = await Feedback.create({     
         passengerId: req.body.passengerId,
         message: req.body.message,
@@ -43,8 +49,9 @@ router.post('/create', async(req, res) => {
    const driverId = Number(req.params.id); 
    const feedback = await Feedback.findAll({
        where: {
-           driverId: driverId 
-       } ,
+           driverId: driverId,
+           sender : "passenger" 
+       },order: [['createdAt', 'DESC']] ,
        include: [Passenger] 
      });
      if(feedback.length){
