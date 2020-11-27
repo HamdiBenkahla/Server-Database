@@ -80,11 +80,11 @@ router.post('/reserve',async(req,res)=>{
 
 router.get('/passenger/:id', async(req, res) => {
   try{
-    console.log(req.params)
+    // console.log(req.params)
     const passengerId = Number(req.params.id);
     const passenger = await Passenger.findByPk(passengerId);
     const rides = await passenger.getRides();
-    console.log(rides)
+    console.log('rides', rides);
         if(rides.length){
          res.status(200).json(rides);
         }
