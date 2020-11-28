@@ -34,6 +34,7 @@ module.exports = (sequelize, DataTypes) => {
     driverLicense: DataTypes.INTEGER,
     timesRated: DataTypes.INTEGER,
     rating: DataTypes.INTEGER,
+    imageUrl: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Driver',

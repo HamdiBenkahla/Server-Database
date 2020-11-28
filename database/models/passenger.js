@@ -24,7 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     phoneNumber: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    ICN: DataTypes.INTEGER
+    ICN: DataTypes.INTEGER,
+    imageUrl: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Passenger',

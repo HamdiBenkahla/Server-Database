@@ -36,6 +36,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
+      imageUrl: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        defaultValue: 'https://fanfare-makabes.fr/wp-content/uploads/2015/09/user-image.jpg'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

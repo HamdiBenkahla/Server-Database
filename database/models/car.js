@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     VKT: DataTypes.INTEGER,
     VIN: DataTypes.INTEGER,
     maxSeats: DataTypes.INTEGER,
-    driverId: DataTypes.INTEGER
+    driverId: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Car',

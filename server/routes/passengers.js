@@ -67,6 +67,7 @@ nodemailer.createTestAccount((err, email) => {
   };
   transporter.sendMail(mailOptions, (err, info) => {
     console.log("done");
+     
   });
 }); 
 })
