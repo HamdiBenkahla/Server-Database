@@ -139,13 +139,16 @@ router.post('/create', async(req, res) => {
   //    find() for any field
    router.get('/driver/:id',async (req,res) => {
      try {
+       console.log(req.params)
     const driverId = Number(req.params.id); 
     const rides = await Ride.findAll({
         where: {
             driverId: driverId,
             ratedStatus: false
-        }
+        },
+        include: [Passenger]
       });
+      console.log(rides)
       if(rides.length){
         res.status(200).json(rides);
        }
