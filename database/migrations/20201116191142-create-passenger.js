@@ -22,7 +22,7 @@ module.exports = {
       },
       phoneNumber: {
         allowNull: false,
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       email: {
         allowNull: false,
@@ -35,6 +35,11 @@ module.exports = {
       ICN: {
         allowNull: false,
         type: Sequelize.INTEGER
+      },
+      imageUrl: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        defaultValue: 'https://fanfare-makabes.fr/wp-content/uploads/2015/09/user-image.jpg'
       },
       createdAt: {
         allowNull: false,
