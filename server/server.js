@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileupload = require("express-fileupload")
 const file = require("./routes/upload.js");
-require("dotenv").config();
+const dotenv = require('dotenv');
+require('dotenv').config()
 
 app.use(fileupload({useTempFiles: true}));
 

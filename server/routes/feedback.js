@@ -19,6 +19,7 @@ router.post('/create', async(req, res) => {
         await Driver.update({rating: newRating}, {where: {id: driverId}})
         const ride = await Ride.findByPk(rideId);
         await ride.addPassenger(passengerId, {ratedStatus: true});
+
         const feedback = await Feedback.create({     
         passengerId: req.body.passengerId,
         message: req.body.message,
@@ -56,6 +57,23 @@ router.post('/create', async(req, res) => {
 }
 });
 
+ router.get('/passenger/:id',async (req,res) => {
+    try {
+   const passengerId = Number(req.params.id); 
+   const feedback = await Feedback.findAll({
+       where: {
+           passengerId: passengerId,
+           sender : "driver" 
+       },order: [['createdAt', 'DESC']] ,
+       include: [Driver] 
+     });
+     if(feedback.length){
+       res.status(200).json(feedback);
+      }
+  }catch(error) {
+    res.status(500).json(error);
+}
+});
 
 
 

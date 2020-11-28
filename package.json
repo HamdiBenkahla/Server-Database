@@ -31,7 +31,8 @@
     "mysql2": "^2.2.5",
     "nodemailer": "^6.4.16",
     "nodemailer-smtp-transport": "^2.7.4",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "twilio": "^3.52.0"
   },
   "devDependencies": {
     "sequelize-cli": "^6.2.0"

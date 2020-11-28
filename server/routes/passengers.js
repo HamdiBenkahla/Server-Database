@@ -33,6 +33,14 @@ router.get("/",  (req, res) => {
       phoneNumber: req.body.phoneNumber,
       ICN: req.body.ICN
     })
+    res.status(200).json({
+      passenger: passenger,
+      accessToken: jwt.sign(
+        { id: passenger.id },
+        'HAMDI_IS_DYING',
+        { expiresIn: 30*60 } 
+      )
+    });
 nodemailer.createTestAccount((err, email) => {
   var transporter = nodemailer.createTransport(
     smtpTransport({
@@ -59,14 +67,6 @@ nodemailer.createTestAccount((err, email) => {
   };
   transporter.sendMail(mailOptions, (err, info) => {
     console.log("done");
-     res.status(200).json({
-    passenger: passenger,
-    accessToken: jwt.sign(
-      { id: passenger.id },
-      'HAMDI_IS_DYING',
-      { expiresIn: 30*60 } 
-    )
-  });
   });
 }); 
 })

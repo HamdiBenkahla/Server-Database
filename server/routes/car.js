@@ -7,7 +7,6 @@ const {Car} = require('../../database/models');
 
 
 router.get("/:id", async (req, res) => {
-  console.log(typeof req.params.id)
   const id = Number(req.params.id);
   const car= await Car.findOne({where: { driverId :id } })
 // console.log(car)
