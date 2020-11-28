@@ -80,11 +80,11 @@ router.post('/reserve',async(req,res)=>{
 
 router.get('/passenger/:id', async(req, res) => {
   try{
-    console.log(req.params)
+    // console.log(req.params)
     const passengerId = Number(req.params.id);
     const passenger = await Passenger.findByPk(passengerId);
     const rides = await passenger.getRides();
-    console.log(rides)
+    console.log('rides', rides);
         if(rides.length){
          res.status(200).json(rides);
         }
@@ -139,13 +139,16 @@ router.post('/create', async(req, res) => {
   //    find() for any field
    router.get('/driver/:id',async (req,res) => {
      try {
+       console.log(req.params)
     const driverId = Number(req.params.id); 
     const rides = await Ride.findAll({
         where: {
             driverId: driverId,
             ratedStatus: false
-        }
+        },
+        include: [Passenger]
       });
+      console.log(rides)
       if(rides.length){
         res.status(200).json(rides);
        }
