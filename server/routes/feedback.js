@@ -62,6 +62,23 @@ router.post('/create', async(req, res) => {
 }
 });
 
+ router.get('/passenger/:id',async (req,res) => {
+    try {
+   const passengerId = Number(req.params.id); 
+   const feedback = await Feedback.findAll({
+       where: {
+           passengerId: passengerId,
+           sender : "driver" 
+       },order: [['createdAt', 'DESC']] ,
+       include: [Driver] 
+     });
+     if(feedback.length){
+       res.status(200).json(feedback);
+      }
+  }catch(error) {
+    res.status(500).json(error);
+}
+});
 
 
 
