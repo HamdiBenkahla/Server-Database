@@ -4,6 +4,10 @@ const {Ride, Driver, Passenger} = require('../../database/models');
 const { Op, literal } = require("sequelize");
 var twilio = require("twilio");
 
+var accountSid = "AC2a8af006e7a6678aae74e361dd5b598c"; 
+var authToken = "bfee0435ad1a900feeed5ae9f59381bb";
+
+
 router.get('/:id', async(req, res) => {
   try {
     const passengerId = +req.params.id;
@@ -76,6 +80,7 @@ router.post('/search', async(req, res) => {
 
 router.post('/reserve',async(req,res)=>{ 
   try{
+    var client = new twilio(accountSid, authToken);
     console.log(req.body);
   const rideId = req.body.rideId;
   const passengerId = req.body.passengerId;
@@ -83,9 +88,17 @@ router.post('/reserve',async(req,res)=>{
   await Ride.decrement('seats', { where: { id: rideId }});
   await Ride.update({ checkedStatus: true}, { where: { id: rideId, seats: 0 }})
       const ride = await Ride.findByPk(rideId)
+      const passenger = await Passenger.findByPk(passengerId)
+      console.log(passenger.phoneNumber)
       console.log(ride);
       let reserved = await ride.addPassenger(passengerId);
-          if(reserved) return res.json('reserved');
+          if(reserved){ 
+            client.messages.create({
+      body: "Hello doctor this from your app",
+      to: `+ ${passenger.phoneNumber}`, // Text this number
+      from: "+19387661291", // From a valid Twilio number
+    })
+            return res.json('reserved', message);}
         } catch(error) {
           res.status(405).json(error);
         }
