@@ -97,8 +97,8 @@ router.get('/passenger/:id', async(req, res) => {
     // console.log(req.params)
     const passengerId = Number(req.params.id);
     const passenger = await Passenger.findByPk(passengerId);
-    const rides = await passenger.getRides();
-    console.log('rides', rides);
+    const rides = await passenger.getRides({include: [Driver]});
+    // console.log('rides', rides);
         if(rides.length){
          res.status(200).json(rides);
         }
