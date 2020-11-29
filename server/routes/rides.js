@@ -2,7 +2,7 @@ const express = require('express');
 const router= express.Router();
 const {Ride, Driver, Passenger} = require('../../database/models');
 const { Op, literal } = require("sequelize");
-
+var twilio = require("twilio");
 
 router.get('/:id', async(req, res) => {
   try {
@@ -42,11 +42,6 @@ router.post("/reserve/add", async (req, res) => {
     ride.addPassenger(passengerId);
   });
 
-
-//   const ride = await Passenger.create({ id: passengerId });
-//   await user.addRide([ride,RidePassengers]);
-//   const appointment = await sequelize.query(`INSERT INTO RidePassenger(rideId,passengerId) VALUES("${rideId}","${passengerId}"`, { type: QueryTypes.INSERT});
-  
 router.post('/search', async(req, res) => {
   try {
     const passengerId = req.body.passengerId;
@@ -164,7 +159,7 @@ router.post('/create', async(req, res) => {
         where: {
             driverId: driverId,
             ratedStatus: false
-        },
+        }, order: [['createdAt', 'DESC']] ,
         include: [Passenger]
       });
       console.log(rides)
