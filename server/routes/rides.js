@@ -3,11 +3,33 @@ const router= express.Router();
 const {Ride, Driver, Passenger} = require('../../database/models');
 const { Op, literal } = require("sequelize");
 var twilio = require("twilio");
+
 var accountSid = "AC2a8af006e7a6678aae74e361dd5b598c"; 
 var authToken = "bfee0435ad1a900feeed5ae9f59381bb";
-// Ride.create()
-router.get('/', async(req, res) => {
-    await Ride.findAll().then((passenger) => res.json(passenger))
+
+
+router.get('/:id', async(req, res) => {
+  try {
+    const passengerId = +req.params.id;
+    const passenger = await Passenger.findByPk(passengerId);
+    const myRides = await passenger.getRides();
+    const rides = await Ride.findAll({
+      where: {checkedStatus: false},
+      include: [Driver]
+    });
+    for(var i = 0; i < rides.length; i++) {
+      for(var j = 0; j < myRides.length; j++) {
+        if(rides[i].id === myRides[j].id) {
+          rides.splice(i, 1);
+          i++;
+          break;
+        }
+      }
+    }
+    res.status(200).json(rides);
+    } catch(error) {
+        res.status(405).json(error);
+    }
 });
 
 
