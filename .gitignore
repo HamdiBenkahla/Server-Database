@@ -1,3 +1,4 @@
 node_modules
+tmp
 database/config/config.json
 config.js
