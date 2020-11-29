@@ -36,6 +36,9 @@ router.get("/", (req, res) => {
         ICN: req.body.ICN,
         driverLicense: req.body.driverLicense
       });
+      // console.log(driver)
+      // const updatedDriver = await Driver.findByPk(driver.id)
+      // console.log(updatedDriver);
       res.json({
         driver: driver,
           accessToken : jwt.sign(
@@ -91,27 +94,6 @@ router.get("/", (req, res) => {
         )
       });
   });
-
-  router.put("/:id", (req, res) => {
-    Driver.findByPk(req.params.id).then((drivers) => {
-      drivers.update({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            password:hashPassword,
-            email: req.body.email,
-            address: req.body.address,
-            phoneNumber: req.body.phoneNumber,
-            ICN: req.body.ICN,
-            driverLicense: req.body.driverLicense,
-            timesRated: req.body.timesRated,
-            rating: req.body.rating
-        })
-        .then((drivers) => {
-          res.json(drivers);
-        });
-    });
-  });
-
 
 
   router.delete("/:id",  (req, res) => {
