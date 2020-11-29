@@ -2,11 +2,30 @@ const express = require('express');
 const router= express.Router();
 const {Ride, Driver, Passenger} = require('../../database/models');
 const { Op, literal } = require("sequelize");
+var twilio = require("twilio");
 
-
-// Ride.create()
-router.get('/', async(req, res) => {
-    await Ride.findAll().then((passenger) => res.json(passenger))
+router.get('/:id', async(req, res) => {
+  try {
+    const passengerId = +req.params.id;
+    const passenger = await Passenger.findByPk(passengerId);
+    const myRides = await passenger.getRides();
+    const rides = await Ride.findAll({
+      where: {checkedStatus: false},
+      include: [Driver]
+    });
+    for(var i = 0; i < rides.length; i++) {
+      for(var j = 0; j < myRides.length; j++) {
+        if(rides[i].id === myRides[j].id) {
+          rides.splice(i, 1);
+          i++;
+          break;
+        }
+      }
+    }
+    res.status(200).json(rides);
+    } catch(error) {
+        res.status(405).json(error);
+    }
 });
 
 
@@ -23,11 +42,6 @@ router.post("/reserve/add", async (req, res) => {
     ride.addPassenger(passengerId);
   });
 
-
-//   const ride = await Passenger.create({ id: passengerId });
-//   await user.addRide([ride,RidePassengers]);
-//   const appointment = await sequelize.query(`INSERT INTO RidePassenger(rideId,passengerId) VALUES("${rideId}","${passengerId}"`, { type: QueryTypes.INSERT});
-  
 router.post('/search', async(req, res) => {
   try {
     const passengerId = req.body.passengerId;
@@ -145,7 +159,7 @@ router.post('/create', async(req, res) => {
         where: {
             driverId: driverId,
             ratedStatus: false
-        },
+        }, order: [['createdAt', 'DESC']] ,
         include: [Passenger]
       });
       console.log(rides)
