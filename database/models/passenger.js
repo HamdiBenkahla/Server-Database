@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Passenger.hasMany(models.Feedback, {
         foreignKey: 'passengerId',
       })
-      Passenger.belongsToMany(models.Ride, {through: 'RidePassengers'})
+      Passenger.belongsToMany(models.Ride, {through: 'RidePasesngers'})
     }
   };
   Passenger.init({

@@ -89,16 +89,18 @@ router.post('/reserve',async(req,res)=>{
   await Ride.update({ checkedStatus: true}, { where: { id: rideId, seats: 0 }})
       const ride = await Ride.findByPk(rideId)
       const passenger = await Passenger.findByPk(passengerId)
-      console.log(passenger.phoneNumber)
-      console.log(ride);
+      // console.log(passenger.phoneNumber)
+      console.log(ride); 
       let reserved = await ride.addPassenger(passengerId);
-          if(reserved){ 
+        console.log('reserved',reserved)
+          if(reserved){
+           res.json({ message :"reserved"})
             client.messages.create({
       body: "Hello doctor this from your app",
-      to: `+ ${passenger.phoneNumber}`, // Text this number
+      to: `${passenger.phoneNumber}`, // Text this number
       from: "+19387661291", // From a valid Twilio number
     })
-            return res.json('reserved', message);}
+            }
         } catch(error) {
           res.status(405).json(error);
         }
