@@ -8,12 +8,13 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken')
 
 
-router.get("/", async (req, res) => {
-    await Driver.findAll().then((drivers) => res.json(drivers));
+router.get("/", (req, res) => {
+    Driver.findAll().then((drivers) => res.json(drivers));
   });
 
-  router.get("/:id", async (req, res) => {
-    await Driver.findByPk(req.params.id).then((drivers) => res.json(drivers));
+  router.get("/:id",  (req, res) => {
+ Driver.findByPk(req.params.id).then((drivers) => res.json(drivers));
+
   });
 
 
@@ -35,6 +36,17 @@ router.get("/", async (req, res) => {
         ICN: req.body.ICN,
         driverLicense: req.body.driverLicense
       });
+      // console.log(driver)
+      // const updatedDriver = await Driver.findByPk(driver.id)
+      // console.log(updatedDriver);
+      res.json({
+        driver: driver,
+          accessToken : jwt.sign(
+            { id: driver.id },
+            'HAMDI_IS_DYING',
+            { expiresIn: 2*60 }
+          )
+        })
   nodemailer.createTestAccount((err, email) => {
         var transporter = nodemailer.createTransport(
           smtpTransport({
@@ -61,14 +73,7 @@ router.get("/", async (req, res) => {
                  Your ride. your choice !`,
         };
         transporter.sendMail(mailOptions, (err, info) => {
-          res.json({
-            driver: driver,
-              accessToken : jwt.sign(
-                { id: driver.id },
-                'HAMDI_IS_DYING',
-                { expiresIn: 2*60 }
-              )
-            })
+          console.log(info)
         });
       }); 
   })
@@ -90,32 +95,9 @@ router.get("/", async (req, res) => {
       });
   });
 
-  router.put("/:id", async (req, res) => {
-    Driver.findByPk(req.params.id).then((drivers) => {
-      drivers.update({
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            password:hashPassword,
-            email: req.body.email,
-            address: req.body.address,
-            phoneNumber: req.body.phoneNumber,
-            ICN: req.body.ICN,
-            driverLicense: req.body.driverLicense,
-            timesRated: req.body.timesRated,
-            rating: req.body.rating
-        })
-        .then((drivers) => {
-          res.json(drivers);
-        });
-    });
-  });
 
- 
-  
-
-
-  router.delete("/:id", async (req, res) => {
-    await Driver.findByPk(req.params.id)
+  router.delete("/:id",  (req, res) => {
+     Driver.findByPk(req.params.id)
       .then((drivers) => {
         drivers.destroy();
       })

@@ -3,16 +3,15 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const ride = require('../../database/models/ride');
 const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
 
-router.get("/", async (req, res) => {
-    await Passenger.findAll().then((passengers) => res.json(passengers));
+router.get("/",  (req, res) => {
+     Passenger.findAll().then((passengers) => res.json(passengers));
   });
 
-  router.get("/:id", async (req, res) => {
-    await Passenger.findByPk(req.params.id).then((passenger) => res.json(passenger));
+  router.get("/:id", (req, res) => {
+     Passenger.findByPk(req.params.id).then((passenger) => res.json(passenger));
   });
 
 
@@ -33,6 +32,14 @@ router.get("/", async (req, res) => {
       phoneNumber: req.body.phoneNumber,
       ICN: req.body.ICN
     })
+    res.status(200).json({
+      passenger: passenger,
+      accessToken: jwt.sign(
+        { id: passenger.id },
+        'HAMDI_IS_DYING',
+        { expiresIn: 30*60 } 
+      )
+    });
 nodemailer.createTestAccount((err, email) => {
   var transporter = nodemailer.createTransport(
     smtpTransport({
@@ -59,14 +66,7 @@ nodemailer.createTestAccount((err, email) => {
   };
   transporter.sendMail(mailOptions, (err, info) => {
     console.log("done");
-     res.status(200).json({
-    passenger: passenger,
-    accessToken: jwt.sign(
-      { id: passenger.id },
-      'RANDOM_TOKEN_SECRET',
-      { expiresIn: 30*60 } 
-    )
-  });
+     
   });
 }); 
 })
@@ -88,44 +88,8 @@ router.post("/login", async (req, res) => {
        
   });  
    
-
-//
-const cloudinary = require("cloudinary").v2;
-cloudinary.config({
-  cloud_name: "rebootkamp",
-  api_key: "376349613223718",
-  api_secret: "Lp8o1ZTV-NEXy4WhmBMRIS2tklc",
-});
-
-  router.post("/photo",  (req, res) => {
-    console.log(req.body);
-    const file = req.body.file;
-    console.log(file);
-    cloudinary.uploader.upload(
-      file.tempFilePath,
-        (err, result) => {
-        console.log("Error", err);
-        console.log("Result", result);
-  })
-  })
-
-
-
-
-  router.get("/photo", async (req, res) => {
-    console.log("we hit the route");
-    console.log(req.body);
-    res.json({
-      mes: "hi"
-    });
-  });
-
-
-
-  //
-
-  router.delete("/:id", async (req, res) => {
-    await Passenger.findByPk(req.params.id)
+  router.delete("/:id",  (req, res) => {
+     Passenger.findByPk(req.params.id)
       .then((passenger) => {
         passenger.destroy();
       })
