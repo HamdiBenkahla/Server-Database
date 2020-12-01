@@ -27,17 +27,17 @@ module.exports = (sequelize, DataTypes) => {
     firstName: DataTypes.STRING,
     lastName: DataTypes.STRING,
     address: DataTypes.STRING,
-    phoneNumber: DataTypes.INTEGER,
+    phoneNumber: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     ICN: DataTypes.INTEGER,
     driverLicense: DataTypes.INTEGER,
     timesRated: DataTypes.INTEGER,
     rating: DataTypes.INTEGER,
+    imageUrl: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Driver',
   });
   return Driver;
 };
-
