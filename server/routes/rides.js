@@ -164,24 +164,24 @@ router.post('/create', async(req, res) => {
   //  3 - filter the data from database where checkedStatus is false
   //  4 - send the response to the front end in an object where the key is data
   //    find() for any field
-  router.get('/driver/:id',async (req,res) => {
-    try {
-      console.log(req.params)
-   const driverId = Number(req.params.id); 
-   const rides = await Ride.findAll({
-       where: {
-           driverId: driverId,
-           ratedStatus: false
-       }, order: [['createdAt', 'DESC']] ,
-       include: [Passenger]
-     });
-     console.log(rides)
-     if(rides.length){
-       res.status(200).json(rides);
-      }
-  }catch(error) {
-    res.status(500).json(error);
-}
+   router.get('/driver/:id',async (req,res) => {
+     try {
+       console.log(req.params)
+    const driverId = Number(req.params.id); 
+    const rides = await Ride.findAll({
+        where: {
+            driverId: driverId,
+            ratedStatus: false
+        }, order: [['createdAt', 'DESC']] ,
+        include: [Passenger]
+      });
+      console.log(rides)
+      if(rides.length){
+        res.status(200).json(rides);
+       }
+   }catch(error) {
+     res.status(500).json(error);
+ }
 });
 
 

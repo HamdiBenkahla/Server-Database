@@ -18,19 +18,21 @@
   },
   "homepage": "https://github.com/HaykelHadjSalem/Server-Database#readme",
   "dependencies": {
-    "@types/sequelize": "^4.28.9",
     "bcrypt": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cloudinary": "^1.23.0",
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
     "joi": "^17.3.0",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.4.16",
     "nodemailer-smtp-transport": "^2.7.4",
-    "sequelize": "^6.3.5"
+    "sequelize": "^6.3.5",
+    "twilio": "^3.52.0"
   },
   "devDependencies": {
     "sequelize-cli": "^6.2.0"
