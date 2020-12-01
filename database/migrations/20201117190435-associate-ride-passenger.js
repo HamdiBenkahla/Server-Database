@@ -12,6 +12,11 @@ module.exports = {
           primaryKey: true,
           type: Sequelize.INTEGER
         },
+        ratedStatus: {
+          allowNull: false,
+          type: Sequelize.BOOLEAN,
+          defaultValue: false
+        },
         createdAt: {
           allowNull: false,
           type: Sequelize.DATE,
