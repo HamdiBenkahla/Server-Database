@@ -173,30 +173,30 @@ router.post('/create', async(req, res) => {
 
 
 //updating the number of seats every time a passenger reserves
-router.post('/ride/reserve',async(req,res)=>{
-  const seat_id = req.body.seatId;
-  const driver_id = req.body.driverId;
-  const passenger_id = req.body.passengerId;
-  try{
-    const seat = await Ride.findPk(seat_id)
-    if(seat.seats < 5){
-   await Ride.increment({seats: +1, where:{
-                [Op.and]: [
-                  {driverId: driver_id },
-                  { passengerId : passenger_id }
-                ]
-              }
-              });
-   const updated = await Ride.findPk(seat_id)
-   if(updated.seats === 4){
-   await Ride.update({ checkStatus : true })	
-     }
-   res.status(200).json('place is reserved!')
-  }
-  }catch(error){
-   res.status(405).json(error)
-  }
-})
+// router.post('/ride/reserve',async(req,res)=>{
+//   const seat_id = req.body.seatId;
+//   const driver_id = req.body.driverId;
+//   const passenger_id = req.body.passengerId;
+//   try{
+//     const seat = await Ride.findPk(seat_id)
+//     if(seat.seats < 5){
+//    await Ride.increment({seats: +1, where:{
+//                 [Op.and]: [
+//                   {driverId: driver_id },
+//                   { passengerId : passenger_id }
+//                 ]
+//               }
+//               });
+//    const updated = await Ride.findPk(seat_id)
+//    if(updated.seats === 4){
+//    await Ride.update({ checkStatus : true })	
+//      }
+//    res.status(200).json('place is reserved!')
+//   }
+//   }catch(error){
+//    res.status(405).json(error)
+//   }
+// })
    
 
   

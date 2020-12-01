@@ -12,11 +12,11 @@ const driver = require('./routes/drivers.js')
 const passenger = require('./routes/passengers.js')
 const ride = require('./routes/rides.js')
 
-
 app.use("/car", car);
 app.use("/passenger", passenger);
 app.use("/driver", driver);
 app.use("/ride", ride);
+
 
 const PORT = 3000;
 

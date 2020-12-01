@@ -88,6 +88,42 @@ router.post("/login", async (req, res) => {
        
   });  
    
+
+//
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: "rebootkamp",
+  api_key: "376349613223718",
+  api_secret: "Lp8o1ZTV-NEXy4WhmBMRIS2tklc",
+});
+
+  router.post("/photo",  (req, res) => {
+    console.log(req.body);
+    const file = req.body.file;
+    console.log(file);
+    cloudinary.uploader.upload(
+      file.tempFilePath,
+        (err, result) => {
+        console.log("Error", err);
+        console.log("Result", result);
+  })
+  })
+
+
+
+
+  router.get("/photo", async (req, res) => {
+    console.log("we hit the route");
+    console.log(req.body);
+    res.json({
+      mes: "hi"
+    });
+  });
+
+
+
+  //
+
   router.delete("/:id", async (req, res) => {
     await Passenger.findByPk(req.params.id)
       .then((passenger) => {
