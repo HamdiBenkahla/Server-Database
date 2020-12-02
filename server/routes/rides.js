@@ -6,6 +6,7 @@ var twilio = require("twilio");
 
 const now = Date.now() / 1000 / 3600;
 
+
 router.get('/:id', async(req, res) => {
   try {
 
@@ -152,27 +153,27 @@ router.get('/passengers/:id', async(req, res) => {
 //basma
 //will insert a new row in the rides table
 router.post('/create', async(req, res) => {
-    try{console.log(req.body)
-   const ride = await Ride.create({
-     
-       departure: req.body.departure,
-       destination: req.body.destination,
-       date: req.body.date,
-       time: req.body.time,
-       seats: req.body.seats,
-       price: req.body.price,
-       stop1: req.body.stop1,
-       stop2: req.body.stop2,
-       stop3: req.body.stop3,
-       stop4: req.body.stop4,
-       driverId: req.body.driverId
-       })
-       console.log(ride)
-       res.json(ride)
-    }catch(error){
-     res.status(500).json(error)
-    }
-   })
+  try{console.log(req.body)
+ const ride = await Ride.create({
+   
+     departure: req.body.departure,
+     destination: req.body.destination,
+     date: req.body.date,
+     time: req.body.time,
+     seats: req.body.seats,
+     price: req.body.price,
+     stop1: req.body.stop1,
+     stop2: req.body.stop2,
+     stop3: req.body.stop3,
+     stop4: req.body.stop4,
+     driverId: req.body.driverId
+     })
+     console.log(ride)
+     res.json(ride)
+  }catch(error){
+   res.status(500).json(error)
+  }
+ })
 
   //  1 - making an empty memory array to put the filtred data in it
   //  2 - getting all the rides from ride table by driver id
