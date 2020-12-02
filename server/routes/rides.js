@@ -10,9 +10,12 @@ var authToken = "bfee0435ad1a900feeed5ae9f59381bb";
 
 router.get('/:id', async(req, res) => {
   try {
+
+    console.log(req.params)
     const passengerId = +req.params.id;
     const passenger = await Passenger.findByPk(passengerId);
     const myRides = await passenger.getRides();
+    console.log(myRides)
     const rides = await Ride.findAll({
       where: {checkedStatus: false},
       include: [Driver]
