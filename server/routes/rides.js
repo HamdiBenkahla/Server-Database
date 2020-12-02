@@ -4,19 +4,25 @@ const {Ride, Driver, Passenger} = require('../../database/models');
 const { Op, literal } = require("sequelize");
 var twilio = require("twilio");
 
-var accountSid = "AC2a8af006e7a6678aae74e361dd5b598c"; 
-var authToken = "bfee0435ad1a900feeed5ae9f59381bb";
+const now = Date.now() / 1000 / 3600;
 
 
 router.get('/:id', async(req, res) => {
   try {
     const passengerId = +req.params.id;
     const passenger = await Passenger.findByPk(passengerId);
-    const myRides = await passenger.getRides();
     const rides = await Ride.findAll({
       where: {checkedStatus: false},
       include: [Driver]
     });
+    for(var i = 0; i < rides.length; i++) {
+      if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+        await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
+        rides.splice(i, 1);
+        i--;
+      }
+    }
+    const myRides = await passenger.getRides();
     for(var i = 0; i < rides.length; i++) {
       for(var j = 0; j < myRides.length; j++) {
         if(rides[i].id === myRides[j].id) {
@@ -104,7 +110,7 @@ router.post('/reserve',async(req,res)=>{
         }
 })
 
-
+//get all rides for the current passenger.
 router.get('/passenger/:id', async(req, res) => {
   try{
     // console.log(req.params)
@@ -119,7 +125,7 @@ router.get('/passenger/:id', async(req, res) => {
       res.status(500).json(error);
   }
 })
-
+//get all passengers for a given ride.
 router.get('/passengers/:id', async(req, res) => {
   try{
     const rideId = Number(req.params.id);
@@ -176,6 +182,11 @@ router.post('/create', async(req, res) => {
         include: [Passenger]
       });
       console.log(rides)
+      for(var i = 0; i < rides.length; i++) {
+        if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+          await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
+        }
+      }
       if(rides.length){
         res.status(200).json(rides);
        }
