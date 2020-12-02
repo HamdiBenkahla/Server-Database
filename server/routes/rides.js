@@ -1,6 +1,6 @@
 const express = require('express');
 const router= express.Router();
-const {Ride, Driver, Passenger} = require('../../database/models');
+const {Ride, Driver, Passenger,Car} = require('../../database/models');
 const { Op, literal } = require("sequelize");
 var twilio = require("twilio");
 
@@ -9,12 +9,20 @@ const now = Date.now() / 1000 / 3600;
 
 router.get('/:id', async(req, res) => {
   try {
+
+    console.log(req.params)
     const passengerId = +req.params.id;
     const passenger = await Passenger.findByPk(passengerId);
     const rides = await Ride.findAll({
       where: {checkedStatus: false},
-      include: [Driver]
+      include: [{
+        model: Driver, 
+        include: [
+          Car
+        ]  
+      }]
     });
+    console.log(rides);
     for(var i = 0; i < rides.length; i++) {
       if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
         await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
@@ -95,16 +103,18 @@ router.post('/reserve',async(req,res)=>{
   await Ride.update({ checkedStatus: true}, { where: { id: rideId, seats: 0 }})
       const ride = await Ride.findByPk(rideId)
       const passenger = await Passenger.findByPk(passengerId)
-      console.log(passenger.phoneNumber)
-      console.log(ride);
+      // console.log(passenger.phoneNumber)
+      console.log(ride); 
       let reserved = await ride.addPassenger(passengerId);
-          if(reserved){ 
+        console.log('reserved',reserved)
+          if(reserved){
+           res.json({ message :"reserved"})
             client.messages.create({
       body: "Hello doctor this from your app",
-      to: `+ ${passenger.phoneNumber}`, // Text this number
+      to: `${passenger.phoneNumber}`, // Text this number
       from: "+19387661291", // From a valid Twilio number
     })
-            return res.json('reserved', message);}
+            }
         } catch(error) {
           res.status(405).json(error);
         }
