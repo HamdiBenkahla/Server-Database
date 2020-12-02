@@ -1,22 +1,35 @@
 const express = require('express');
 const router= express.Router();
-const {Ride, Driver, Passenger} = require('../../database/models');
+const {Ride, Driver, Passenger,Car} = require('../../database/models');
 const { Op, literal } = require("sequelize");
 var twilio = require("twilio");
 
-var accountSid = "AC2a8af006e7a6678aae74e361dd5b598c"; 
-var authToken = "bfee0435ad1a900feeed5ae9f59381bb";
-
+const now = Date.now() / 1000 / 3600;
 
 router.get('/:id', async(req, res) => {
   try {
+
+    console.log(req.params)
     const passengerId = +req.params.id;
     const passenger = await Passenger.findByPk(passengerId);
-    const myRides = await passenger.getRides();
     const rides = await Ride.findAll({
       where: {checkedStatus: false},
-      include: [Driver]
+      include: [{
+        model: Driver, 
+        include: [
+          Car
+        ]  
+      }]
     });
+    console.log(rides);
+    for(var i = 0; i < rides.length; i++) {
+      if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+        await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
+        rides.splice(i, 1);
+        i--;
+      }
+    }
+    const myRides = await passenger.getRides();
     for(var i = 0; i < rides.length; i++) {
       for(var j = 0; j < myRides.length; j++) {
         if(rides[i].id === myRides[j].id) {
@@ -89,29 +102,31 @@ router.post('/reserve',async(req,res)=>{
   await Ride.update({ checkedStatus: true}, { where: { id: rideId, seats: 0 }})
       const ride = await Ride.findByPk(rideId)
       const passenger = await Passenger.findByPk(passengerId)
-      console.log(passenger.phoneNumber)
-      console.log(ride);
+      // console.log(passenger.phoneNumber)
+      console.log(ride); 
       let reserved = await ride.addPassenger(passengerId);
-          if(reserved){ 
+        console.log('reserved',reserved)
+          if(reserved){
+           res.json({ message :"reserved"})
             client.messages.create({
       body: "Hello doctor this from your app",
-      to: `+ ${passenger.phoneNumber}`, // Text this number
+      to: `${passenger.phoneNumber}`, // Text this number
       from: "+19387661291", // From a valid Twilio number
     })
-            return res.json('reserved', message);}
+            }
         } catch(error) {
           res.status(405).json(error);
         }
 })
 
-
+//get all rides for the current passenger.
 router.get('/passenger/:id', async(req, res) => {
   try{
     // console.log(req.params)
     const passengerId = Number(req.params.id);
     const passenger = await Passenger.findByPk(passengerId);
-    const rides = await passenger.getRides();
-    console.log('rides', rides);
+    const rides = await passenger.getRides({include: [Driver]});
+    // console.log('rides', rides);
         if(rides.length){
          res.status(200).json(rides);
         }
@@ -119,7 +134,7 @@ router.get('/passenger/:id', async(req, res) => {
       res.status(500).json(error);
   }
 })
-
+//get all passengers for a given ride.
 router.get('/passengers/:id', async(req, res) => {
   try{
     const rideId = Number(req.params.id);
@@ -176,6 +191,11 @@ router.post('/create', async(req, res) => {
         include: [Passenger]
       });
       console.log(rides)
+      for(var i = 0; i < rides.length; i++) {
+        if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+          await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
+        }
+      }
       if(rides.length){
         res.status(200).json(rides);
        }

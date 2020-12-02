@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {Driver} = require('../../database/models');
+const {Driver, Car} = require('../../database/models');
 const AuthJwt = require('../Middleware/auth.jwt.js')
 const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
@@ -13,8 +13,10 @@ router.get("/", (req, res) => {
   });
 
   router.get("/:id",  (req, res) => {
- Driver.findByPk(req.params.id).then((drivers) => res.json(drivers));
-
+    console.log(req.params)
+ Driver.findOne({where : {id: +req.params.id}, include : [Car]}).then(driver =>{console.log(driver)
+ 
+   res.json(driver)}).catch(err => res.json(err))
   });
 
 
