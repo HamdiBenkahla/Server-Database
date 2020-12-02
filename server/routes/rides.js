@@ -6,6 +6,7 @@ var twilio = require("twilio");
 
 const now = Date.now() / 1000 / 3600;
 
+
 router.get('/:id', async(req, res) => {
   try {
     const passengerId = +req.params.id;
@@ -85,6 +86,7 @@ router.post('/search', async(req, res) => {
 
 router.post('/reserve',async(req,res)=>{ 
   try{
+    var client = new twilio(accountSid, authToken);
     console.log(req.body);
   const rideId = req.body.rideId;
   const passengerId = req.body.passengerId;
@@ -92,9 +94,17 @@ router.post('/reserve',async(req,res)=>{
   await Ride.decrement('seats', { where: { id: rideId }});
   await Ride.update({ checkedStatus: true}, { where: { id: rideId, seats: 0 }})
       const ride = await Ride.findByPk(rideId)
+      const passenger = await Passenger.findByPk(passengerId)
+      console.log(passenger.phoneNumber)
       console.log(ride);
       let reserved = await ride.addPassenger(passengerId);
-          if(reserved) return res.json('reserved');
+          if(reserved){ 
+            client.messages.create({
+      body: "Hello doctor this from your app",
+      to: `+ ${passenger.phoneNumber}`, // Text this number
+      from: "+19387661291", // From a valid Twilio number
+    })
+            return res.json('reserved', message);}
         } catch(error) {
           res.status(405).json(error);
         }
@@ -133,27 +143,27 @@ router.get('/passengers/:id', async(req, res) => {
 //basma
 //will insert a new row in the rides table
 router.post('/create', async(req, res) => {
-    try{console.log(req.body)
-   const ride = await Ride.create({
-     
-       departure: req.body.departure,
-       destination: req.body.destination,
-       date: req.body.date,
-       time: req.body.time,
-       seats: req.body.seats,
-       price: req.body.price,
-       stop1: req.body.stop1,
-       stop2: req.body.stop2,
-       stop3: req.body.stop3,
-       stop4: req.body.stop4,
-       driverId: req.body.driverId
-       })
-       console.log(ride)
-       res.json(ride)
-    }catch(error){
-     res.status(500).json(error)
-    }
-   })
+  try{console.log(req.body)
+ const ride = await Ride.create({
+   
+     departure: req.body.departure,
+     destination: req.body.destination,
+     date: req.body.date,
+     time: req.body.time,
+     seats: req.body.seats,
+     price: req.body.price,
+     stop1: req.body.stop1,
+     stop2: req.body.stop2,
+     stop3: req.body.stop3,
+     stop4: req.body.stop4,
+     driverId: req.body.driverId
+     })
+     console.log(ride)
+     res.json(ride)
+  }catch(error){
+   res.status(500).json(error)
+  }
+ })
 
   //  1 - making an empty memory array to put the filtred data in it
   //  2 - getting all the rides from ride table by driver id
