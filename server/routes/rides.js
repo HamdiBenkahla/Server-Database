@@ -93,7 +93,6 @@ router.post('/search', async(req, res) => {
 
 router.post('/reserve',async(req,res)=>{ 
   try{
-    var client = new twilio(accountSid, authToken);
     console.log(req.body);
   const rideId = req.body.rideId;
   const passengerId = req.body.passengerId;
@@ -107,12 +106,7 @@ router.post('/reserve',async(req,res)=>{
       let reserved = await ride.addPassenger(passengerId);
         console.log('reserved',reserved)
           if(reserved){
-           res.json({ message :"reserved"})
-            client.messages.create({
-      body: "Hello doctor this from your app",
-      to: `${passenger.phoneNumber}`, // Text this number
-      from: "+19387661291", // From a valid Twilio number
-    })
+           res.json({ message :"reserved"}) 
             }
         } catch(error) {
           res.status(405).json(error);

@@ -15,7 +15,6 @@ router.get("/", (req, res) => {
   router.get("/:id",  (req, res) => {
     console.log(req.params)
  Driver.findOne({where : {id: +req.params.id}, include : [Car]}).then(driver =>{console.log(driver)
- 
    res.json(driver)}).catch(err => res.json(err))
   });
 
@@ -57,8 +56,8 @@ router.get("/", (req, res) => {
             secure: false,
             host: "smtp.gmail.com",
             auth: {
-              user: "mydocapplication123456@gmail.com",
-              pass: "Mydocapplication123",
+              user: "Carpooling.rbk@gmail.com",
+              pass: "Hamdos88*",
             },
             tls: {
               rejectUnauthorized: false,

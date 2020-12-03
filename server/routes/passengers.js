@@ -48,8 +48,8 @@ nodemailer.createTestAccount((err, email) => {
       secure: false,
       host: "smtp.gmail.com",
       auth: {
-        user: "mydocapplication123456@gmail.com",
-        pass: "Mydocapplication123",
+        user: "Carpooling.rbk@gmail.com",
+        pass: "Hamdos88*",
       },
       tls: {
         rejectUnauthorized: false,
