@@ -101,7 +101,7 @@ router.post('/reserve',async(req,res)=>{
     console.log(req.body);
   const rideId = req.body.rideId;
   const passengerId = req.body.passengerId;
-    
+  await Passenger.increment("ridesNumber", {by: 1, where: {id: passengerId}})
   await Ride.decrement('seats', { where: { id: rideId }});
   await Ride.update({ checkedStatus: true}, { where: { id: rideId, seats: 0 }})
       const ride = await Ride.findByPk(rideId)
@@ -157,6 +157,7 @@ router.get('/passengers/:id', async(req, res) => {
 //will insert a new row in the rides table
 router.post('/create', async(req, res) => {
   try{console.log(req.body)
+    await Driver.increment("ridesNumber", {by: 1, where: {id: req.body.driverId}})
  const ride = await Ride.create({
    
      departure: req.body.departure,

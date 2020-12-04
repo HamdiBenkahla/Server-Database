@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     ICN: DataTypes.INTEGER,
     imageUrl: DataTypes.STRING,
+    ridesNumber: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'Passenger',
