@@ -39,10 +39,10 @@ router.get("/", (req, res) => {
         driverLicense: req.body.driverLicense
       });
       // console.log(driver)
-      // const updatedDriver = await Driver.findByPk(driver.id)
+      const updatedDriver = await Driver.findByPk(driver.id)
       // console.log(updatedDriver);
       res.json({
-        driver: driver,
+        driver: updatedDriver,
           accessToken : jwt.sign(
             { id: driver.id },
             'HAMDI_IS_DYING',
