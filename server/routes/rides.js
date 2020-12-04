@@ -10,7 +10,7 @@ const now = Date.now() / 1000 / 3600;
 router.get('/:id', async(req, res) => {
   try {
 
-    console.log(req.params)
+    // console.log(req.params)
     const passengerId = +req.params.id;
     const passenger = await Passenger.findByPk(passengerId);
     const rides = await Ride.findAll({
@@ -22,20 +22,23 @@ router.get('/:id', async(req, res) => {
         ]  
       }]
     });
-    console.log(rides);
+    // console.log(rides);
     for(var i = 0; i < rides.length; i++) {
-      if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+      let time = rides[i].time.split(':').reduce((acc,time) => (60 * acc) + +time);
+      if(((Date.parse(rides[i].date) / 1000) + time) / 3600 <= now) {
         await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
         rides.splice(i, 1);
         i--;
       }
     }
+    // console.log(rides)
     const myRides = await passenger.getRides();
+    console.log('myrides', myRides)
     for(var i = 0; i < rides.length; i++) {
       for(var j = 0; j < myRides.length; j++) {
         if(rides[i].id === myRides[j].id) {
           rides.splice(i, 1);
-          i++;
+          i--;
           break;
         }
       }
@@ -94,7 +97,7 @@ router.post('/search', async(req, res) => {
 
 router.post('/reserve',async(req,res)=>{ 
   try{
-    var client = new twilio(accountSid, authToken);
+    // var client = new twilio(accountSid, authToken);
     console.log(req.body);
   const rideId = req.body.rideId;
   const passengerId = req.body.passengerId;
@@ -109,11 +112,11 @@ router.post('/reserve',async(req,res)=>{
         console.log('reserved',reserved)
           if(reserved){
            res.json({ message :"reserved"})
-            client.messages.create({
-      body: "Hello doctor this from your app",
-      to: `${passenger.phoneNumber}`, // Text this number
-      from: "+19387661291", // From a valid Twilio number
-    })
+    //         client.messages.create({
+    //   body: "Hello doctor this from your app",
+    //   to: `${passenger.phoneNumber}`, // Text this number
+    //   from: "+19387661291", // From a valid Twilio number
+    // })
             }
         } catch(error) {
           res.status(405).json(error);
@@ -193,7 +196,8 @@ router.post('/create', async(req, res) => {
       });
       console.log(rides)
       for(var i = 0; i < rides.length; i++) {
-        if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+        let time = rides[i].time.split(':').reduce((acc,time) => (60 * acc) + +time);
+        if(((Date.parse(rides[i].date) / 1000) + time) / 3600 <= now && rides[i].checkedStatus === false) {
           await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
         }
       }

@@ -15,16 +15,25 @@ router.post('/create', async(req, res) => {
         const driverId = req.body.driverId;
         const rideId = req.body.rideId;
         const passengerId = req.body.passengerId;
+        if(req.body.sender === 'passenger') {
         const driver = await Driver.findByPk(driverId);
         let newRating = (rating + (driver.rating * driver.timesRated)) / (driver.timesRated + 1);
         await Driver.increment("timesRated", {by: 1, where: {id: driverId}})
         const driverrated = await Driver.update({rating: newRating}, {where: {id: driverId}});
         console.log(driverrated)
+        const ratedride = await RidePassenger.update({ratedStatus: true}, {where: {rideId: rideId, passengerId: passengerId}})
+        console.log(ratedride);
+        } else {
+            if(req.body.rated) {
+                await Ride.update({ratedStatus: true}, { where: { id: req.body.rideId}}) 
+            }
+        }
+        
         // const ride = await Ride.findByPk(rideId);
         // console.log(ride);
-        const ratedride = await RidePassenger.update({ratedStatus: true}, {where: {rideId: rideId, passengerId: passengerId}})
+        
         // const updatedstatus = await ride.addPassenger({passengerId: passengerId, ratedStatus: true});
-        console.log(ratedride);
+        
         const feedback = await Feedback.create({     
         passengerId: req.body.passengerId,
         message: req.body.message,
@@ -34,9 +43,6 @@ router.post('/create', async(req, res) => {
         })
 
         console.log(feedback)
-        if(req.body.rated) {
-            await Ride.update({ratedStatus: true}, { where: { id: req.body.rideId}}) 
-        }
         res.json(feedback)
     }catch(error){
         res.status(500).json(error)
