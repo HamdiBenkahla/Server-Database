@@ -32,8 +32,9 @@ router.get("/",  (req, res) => {
       phoneNumber: req.body.phoneNumber,
       ICN: req.body.ICN
     })
+    const updatedPassenger = await Passenger.findByPk(passenger.id)
     res.status(200).json({
-      passenger: passenger,
+      passenger: updatedPassenger,
       accessToken: jwt.sign(
         { id: passenger.id },
         'HAMDI_IS_DYING',

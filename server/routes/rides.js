@@ -6,10 +6,11 @@ var twilio = require("twilio");
 
 const now = Date.now() / 1000 / 3600;
 
+
 router.get('/:id', async(req, res) => {
   try {
 
-    console.log(req.params)
+    // console.log(req.params)
     const passengerId = +req.params.id;
     const passenger = await Passenger.findByPk(passengerId);
     const rides = await Ride.findAll({
@@ -21,20 +22,23 @@ router.get('/:id', async(req, res) => {
         ]  
       }]
     });
-    console.log(rides);
+    // console.log(rides);
     for(var i = 0; i < rides.length; i++) {
-      if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+      let time = rides[i].time.split(':').reduce((acc,time) => (60 * acc) + +time);
+      if(((Date.parse(rides[i].date) / 1000) + time) / 3600 <= now) {
         await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
         rides.splice(i, 1);
         i--;
       }
     }
+    // console.log(rides)
     const myRides = await passenger.getRides();
+    console.log('myrides', myRides)
     for(var i = 0; i < rides.length; i++) {
       for(var j = 0; j < myRides.length; j++) {
         if(rides[i].id === myRides[j].id) {
           rides.splice(i, 1);
-          i++;
+          i--;
           break;
         }
       }
@@ -93,10 +97,11 @@ router.post('/search', async(req, res) => {
 
 router.post('/reserve',async(req,res)=>{ 
   try{
+    // var client = new twilio(accountSid, authToken);
     console.log(req.body);
   const rideId = req.body.rideId;
   const passengerId = req.body.passengerId;
-    
+  await Passenger.increment("ridesNumber", {by: 1, where: {id: passengerId}})
   await Ride.decrement('seats', { where: { id: rideId }});
   await Ride.update({ checkedStatus: true}, { where: { id: rideId, seats: 0 }})
       const ride = await Ride.findByPk(rideId)
@@ -106,14 +111,11 @@ router.post('/reserve',async(req,res)=>{
       let reserved = await ride.addPassenger(passengerId);
         console.log('reserved',reserved)
           if(reserved){
-           res.json({ message :"reserved"}) 
             }
         } catch(error) {
-          res.status(405).json(error);
         }
 })
 
-//get all rides for the current passenger.
 router.get('/passenger/:id', async(req, res) => {
   try{
     // console.log(req.params)
@@ -146,27 +148,28 @@ router.get('/passengers/:id', async(req, res) => {
 //basma
 //will insert a new row in the rides table
 router.post('/create', async(req, res) => {
-    try{console.log(req.body)
-   const ride = await Ride.create({
-     
-       departure: req.body.departure,
-       destination: req.body.destination,
-       date: req.body.date,
-       time: req.body.time,
-       seats: req.body.seats,
-       price: req.body.price,
-       stop1: req.body.stop1,
-       stop2: req.body.stop2,
-       stop3: req.body.stop3,
-       stop4: req.body.stop4,
-       driverId: req.body.driverId
-       })
-       console.log(ride)
-       res.json(ride)
-    }catch(error){
-     res.status(500).json(error)
-    }
-   })
+  try{console.log(req.body)
+    await Driver.increment("ridesNumber", {by: 1, where: {id: req.body.driverId}})
+ const ride = await Ride.create({
+   
+     departure: req.body.departure,
+     destination: req.body.destination,
+     date: req.body.date,
+     time: req.body.time,
+     seats: req.body.seats,
+     price: req.body.price,
+     stop1: req.body.stop1,
+     stop2: req.body.stop2,
+     stop3: req.body.stop3,
+     stop4: req.body.stop4,
+     driverId: req.body.driverId
+     })
+     console.log(ride)
+     res.json(ride)
+  }catch(error){
+   res.status(500).json(error)
+  }
+ })
 
   //  1 - making an empty memory array to put the filtred data in it
   //  2 - getting all the rides from ride table by driver id
@@ -186,7 +189,8 @@ router.post('/create', async(req, res) => {
       });
       console.log(rides)
       for(var i = 0; i < rides.length; i++) {
-        if(((Date.parse(rides[i].date) / 1000) + rides[i].time) / 3600 <= now && rides[i].checkedStatus === false) {
+        let time = rides[i].time.split(':').reduce((acc,time) => (60 * acc) + +time);
+        if(((Date.parse(rides[i].date) / 1000) + time) / 3600 <= now && rides[i].checkedStatus === false) {
           await Ride.update({ checkedStatus: true}, { where: { id: rides[i].id}})
         }
       }
